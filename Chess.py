@@ -11,8 +11,8 @@ chess.Move.from_uci("a8a1") in board.legal_moves
 #from what I can tell the code above defines what moves are in the uci to then transfer them to board.legal_moves library.
 
 #to tell it where to start, you could have an array of all the values of the squares, that being 0-63.  
-#then have the peices haves values assigned based on their previous location.  so we should also have a function here
-#that tells the function below it where the peice they are looking for is
+#then have the pieces haves values assigned based on their previous location.  so we should also have a function here
+#that tells the function below it where the piece they are looking for is
 squares = []
 for i in range(64):
     squares.append(i)
@@ -44,7 +44,7 @@ for i in range(1,9):
 
 #same thing here.
 
-def peice_assignment(move,turn):
+def piece_assignment(move,turn):
     tempcurrent = move[0:2]#gets the first square you came fro
     tempnew=move[2:4]#gets the square you plan to move to
     current=square_calc(tempcurrent)#these next two lines calculate the exact square values of those squares
@@ -184,7 +184,7 @@ def en_passant(new_move,turn):
             print("should work")
             board.remove_piece_at(new-8)
             chess.Move(current,new)
-            peice_assignment(new_move, turn)
+            piece_assignment(new_move, turn)
             return 1
         else:
             print("if statement error")
@@ -194,7 +194,7 @@ def en_passant(new_move,turn):
         if (current in black_pawns and (new==current-9 or new==current-7) and new+8 in white_pawns):
             board.remove_piece_at(new+8)
             chess.Move(current,new)
-            peice_assignment(new_move,turn)
+            piece_assignment(new_move,turn)
             return 1
         else:
             return -2
@@ -213,7 +213,7 @@ def pawn_taking(new_move,turn):
             #finally, it chescks whether or not the new square is one square diagonal to the current square
             board.remove_piece_at(new_square)
             chess.Move(current_square,new_square)
-            peice_assignment(new_move,turn)
+            piece_assignment(new_move,turn)
             return 1
         else:
             return -1
@@ -224,7 +224,7 @@ def pawn_taking(new_move,turn):
             #there fore, instead of +9 or +7, you get -9 and -7
             board.remove_piece_at(new_square)
             chess.Move(current_square,new_square)
-            peice_assignment(new_move,turn)
+            piece_assignment(new_move,turn)
             return 1
         else:
             return -1
@@ -260,7 +260,7 @@ while(board.is_checkmate()==False):
     move=input("Enter your move: ")
     try:
         board.push_uci(move)
-        peice_assignment(move,turn)
+        piece_assignment(move,turn)
         if turn==1:
             turn=0
         else:
