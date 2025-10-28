@@ -8,7 +8,7 @@
 
 #this lowkey might be wrong depedning on how the board works out, but lets find out first
 
-
+#written by Austin Goodnight
 
 '''
 MOTOR TESTING
@@ -30,11 +30,6 @@ MOTOR III
 with real driver:
     not tested but seems to work flawlessy
 with fake driver:
-
-
-
-
-
 
 
 
@@ -79,6 +74,10 @@ x  x
 g  x
 USB PORT SIDE
 '''
+
+#this assigns each motor to an output on the pi
+#one is an alernating control that moves the motor once per HIGH/LOW
+#the second changes the direction of this movement when HIGH
 m1step = LED(26)
 m1dir = LED(20)
 
@@ -87,6 +86,7 @@ m2dir = LED(16)
 
 
 stepmode = 4 #inverse of step division // lower is faster but less precise
+    #this is set on the board by default, has to match the physical board
 
 squareSize = 58.7475 #size of squares
 
@@ -101,30 +101,28 @@ stepsPerRotation = 200 * stepmode #number of steps per rotation
 
 def motorController(distance, axis):
 
-    if distance < 0:
+
+    if distance < 0: #if distance is negative, set direction to HIGH 
         m1dir.on()
         m2dir.on()
         dist = -distance
     else:
         dist = distance
+        m1dir.off()
+        m2dir.off()
 
+    #calculate steps based on factors
     steps = int(((dist * squareSize) / rotationLength) * stepsPerRotation)
 
-    if axis == 'x':
+    if axis == 'x': #for x axis, control two x axis motors
         for i in range(steps):
 
-        #output to pin (selected by motor)
             m1step.on()
             time.sleep(motorDelay * .00005)
             m1step.off()
             time.sleep(motorDelay * .00005)
 
-
-    else:
-
-        #set pin for y axis
-
-        print("code this dumbass")
+    else: # for y axis, control the y axis motor (m2)
 
         for i in range(steps):
 
@@ -133,10 +131,9 @@ def motorController(distance, axis):
             m2step.off()
             time.sleep(motorDelay * .00005)
 
+    #ensure motor direction is set to LOW
     m2dir.off()
-    #calculate steps
-
-
+    m1dir.off()
 
 
 def toCenter():
@@ -175,30 +172,26 @@ def magOn():
 
     #turn electromagnet on
 
-    print("code this dumbass")
+    print("code this")
 
 
 def magOff():
 
     #turn electromagnet off
 
-    print("code this dumbass")
+    print("code this")
 
 
 while True:
+    #script that allows for continual manual entering of moves for testing
 
     move = input("put next move (x,y)")
-
     moves = move.split(',')
 
-
     x = int(moves[0])
-
     y = int(moves[1])
 
-
     motorController(x, 'x')
-
     motorController(y, 'y')
 
 
