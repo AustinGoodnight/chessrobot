@@ -101,7 +101,7 @@ rotationLength = 54 #distance belt moves by one rotation
 
 motorDelay = .1 #delay between motor pulses in microseconds // lower >> faster speed
 
-halfPythagorean = 1/2 * squareSize * 1.41
+halfPythagorean = 1/2 * squareSize * 1.41 #this is the distance to the center of any square from the corner
 
 stepsPerRotation = 200 * stepmode #number of steps per rotation 
 
@@ -115,7 +115,6 @@ def xOff():
     m2step.off()
 
 def motorController(distance, axis):
-
 
     if distance < 0: #if distance is negative, set direction to HIGH 
         m1dir.on()
@@ -133,16 +132,13 @@ def motorController(distance, axis):
 
     if axis == 'x': #for x axis, control two x axis motors
         for i in range(steps):
-
             xOn()
             time.sleep(motorDelay * .00005)
             xOff()
             time.sleep(motorDelay * .00005)
 
     else: # for y axis, control the y axis motor (m2)
-
         for i in range(steps):
-
             m3step.on()
             time.sleep(motorDelay * .00005)
             m3step.off()
@@ -158,7 +154,7 @@ def toCenter():
 
     #moves piece from corner to center
 
-    steps = (halfPythagorean / rotationLength) * stepsPerRotation
+    steps = (halfPythagorean / rotationLength) * stepsPerRotation #calc steps
 
     #move to center
 
@@ -173,7 +169,7 @@ def toCenter():
 
 def toCorner():
 
-    steps = (halfPythagorean / rotationLength) * stepsPerRotation
+    steps = (halfPythagorean / rotationLength) * stepsPerRotation #calc steps
 
     for i in steps:
 
@@ -186,18 +182,13 @@ def toCorner():
         time.sleep(motorDelay * .0001)
 
 
+#directly addressing these is probably better
+#originally I thought there might be more coding needed
 def magOn():
-
-    #turn electromagnet on
-
-    print("code this")
-
+    mag.on()
 
 def magOff():
-
-    #turn electromagnet off
-
-    print("code this")
+    mag.off()
 
 
 while True:
