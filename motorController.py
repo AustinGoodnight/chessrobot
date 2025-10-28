@@ -67,11 +67,13 @@ from gpiozero import LED
 '''
 PIN LAYOUT
 ^ more pins
-x  x
-x  x
-35 36
-37 38
-g  x
+00 01
+05 g
+06 12 (Y Direction 1) [step dir]
+13 g  [electromagnet control]
+19 16 (X Direction 2) [step dir]
+26 20 (X Direction 1) [step dir]
+g  21
 USB PORT SIDE
 '''
 
@@ -83,6 +85,11 @@ m1dir = LED(20)
 
 m2step = LED(19)
 m2dir = LED(16)
+
+m3step = LED(06)
+m3dir = LED(12)
+
+mag = LED(13)
 
 
 stepmode = 4 #inverse of step division // lower is faster but less precise
@@ -99,17 +106,27 @@ halfPythagorean = 1/2 * squareSize * 1.41
 stepsPerRotation = 200 * stepmode #number of steps per rotation 
 
 
+#turns both x motors on and off together
+def xOn():
+    m1step.on()
+    m2step.on()
+def xOff():
+    m1step.off()
+    m2step.off()
+
 def motorController(distance, axis):
 
 
     if distance < 0: #if distance is negative, set direction to HIGH 
         m1dir.on()
         m2dir.on()
+        m3dir.on()
         dist = -distance
     else:
         dist = distance
         m1dir.off()
         m2dir.off()
+        m3dir.off()
 
     #calculate steps based on factors
     steps = int(((dist * squareSize) / rotationLength) * stepsPerRotation)
@@ -117,23 +134,24 @@ def motorController(distance, axis):
     if axis == 'x': #for x axis, control two x axis motors
         for i in range(steps):
 
-            m1step.on()
+            xOn()
             time.sleep(motorDelay * .00005)
-            m1step.off()
+            xOff()
             time.sleep(motorDelay * .00005)
 
     else: # for y axis, control the y axis motor (m2)
 
         for i in range(steps):
 
-            m2step.on()
+            m3step.on()
             time.sleep(motorDelay * .00005)
-            m2step.off()
+            m3step.off()
             time.sleep(motorDelay * .00005)
 
     #ensure motor direction is set to LOW
-    m2dir.off()
     m1dir.off()
+    m2dir.off()
+    m3dir.off()
 
 
 def toCenter():
