@@ -64,6 +64,7 @@ with fake driver:
 
 import time
 from gpiozero import LED
+from pynput import keyboard
 '''
 PIN LAYOUT
 ^ more pins
@@ -71,8 +72,8 @@ PIN LAYOUT
 05 g
 06 12 (Y Direction 1) [step dir]
 13 g  [electromagnet control]
-19 16 (X Direction 2) [step dir]
-26 20 (X Direction 1) [step dir]
+19 16 [xstep] [dir]
+26 20 [xstep] [dir]
 g  21
 USB PORT SIDE
 '''
@@ -80,74 +81,116 @@ USB PORT SIDE
 #this assigns each motor to an output on the pi
 #one is an alernating control that moves the motor once per HIGH/LOW
 #the second changes the direction of this movement when HIGH
-m1step = LED(26)
-m1dir = LED(20)
+m1step = LED(20) #x
+m1dir = LED(26)
 
-m2step = LED(19)
-m2dir = LED(16)
+m2step = LED(16) #y
+m2dir = LED(19)
 
-m3step = LED(06)
-m3dir = LED(12)
 
 mag = LED(13)
 
 
-stepmode = 4 #inverse of step division // lower is faster but less precise
+
+'''
+stepmode = 8 #inverse of step division // lower is faster but less precise
     #this is set on the board by default, has to match the physical board
 
 squareSize = 58.7475 #size of squares
 
 rotationLength = 54 #distance belt moves by one rotation
 
-motorDelay = .1 #delay between motor pulses in microseconds // lower >> faster speed
+motorDelay = .05 #delay between motor pulses in microseconds // lower >> faster speed
 
 halfPythagorean = 1/2 * squareSize * 1.41 #this is the distance to the center of any square from the corner
 
 stepsPerRotation = 200 * stepmode #number of steps per rotation 
+'''
+# ^not using that anymore
+# one rotation is 39mm
+rotationLength = 39.0
+stepsPerRotation = 3200
+squareSize = 58.7475 #size of squares
+halfPythagorean = 1/2 * squareSize * 1.41 #this is the distance to the center of any square from the corner
+motorDelay = .05 #delay between motor pulses in microseconds // lower >> faster speed
 
 
-#turns both x motors on and off together
-def xOn():
-    m1step.on()
-    m2step.on()
-def xOff():
-    m1step.off()
-    m2step.off()
+
+def on_press(key):
+    if ((key.char == ('w'))):
+        m1dir.on()
+        for i in range(300):
+            
+            m1step.on()
+            time.sleep(motorDelay * .00005)
+            m1step.off()
+            time.sleep(motorDelay * .00005)
+    if key.char == ('s'):
+        m1dir.off()
+        for i in range(300):
+            m1step.on()
+            time.sleep(motorDelay * .00005)
+            m1step.off()
+            time.sleep(motorDelay * .00005)
+
+    if key.char == ('a'):
+        m2dir.off()
+        for i in range(300):
+            
+            m2step.on()
+            time.sleep(motorDelay * .00005)
+            m2step.off()
+            time.sleep(motorDelay * .00005)
+
+    if key.char == ('d'):
+        m2dir.on()
+        for i in range(300):
+            m2step.on()
+            time.sleep(motorDelay * .00005)
+            m2step.off()
+            time.sleep(motorDelay * .00005)
+
+def on_release(key):
+    print('release')
+    held = False
+
+with keyboard.Listener(
+        on_press=on_press,
+        on_release=on_release) as listener:
+    listener.join()
+
 
 def motorController(distance, axis):
 
     if distance < 0: #if distance is negative, set direction to HIGH 
         m1dir.on()
         m2dir.on()
-        m3dir.on()
         dist = -distance
     else:
         dist = distance
         m1dir.off()
         m2dir.off()
-        m3dir.off()
 
     #calculate steps based on factors
     steps = int(((dist * squareSize) / rotationLength) * stepsPerRotation)
 
     if axis == 'x': #for x axis, control two x axis motors
         for i in range(steps):
-            xOn()
+            m1step.on()
             time.sleep(motorDelay * .00005)
-            xOff()
+            m1step.off()
             time.sleep(motorDelay * .00005)
 
     else: # for y axis, control the y axis motor (m2)
         for i in range(steps):
-            m3step.on()
+            m2step.on()
             time.sleep(motorDelay * .00005)
-            m3step.off()
+            m2step.off()
             time.sleep(motorDelay * .00005)
 
     #ensure motor direction is set to LOW
     m1dir.off()
     m2dir.off()
-    m3dir.off()
 
 
 def toCenter():
@@ -195,6 +238,21 @@ while True:
     #script that allows for continual manual entering of moves for testing
 
     move = input("put next move (x,y)")
+    if move == 'k':
+        #enter keyboard mode
+        while():
+            m1dir.off()
+            m1step.on()
+            time.sleep(motorDelay * .00005)
+            m1step.off()
+            time.sleep(motorDelay * .00005)
+        while():
+            m1dir.on()
+            m1step.on()
+            time.sleep(motorDelay * .00005)
+            m1step.off()
+            time.sleep(motorDelay * .00005)
+
     moves = move.split(',')
 
     x = int(moves[0])
@@ -202,6 +260,8 @@ while True:
 
     motorController(x, 'x')
     motorController(y, 'y')
+
+
 
 
 '''

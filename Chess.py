@@ -45,7 +45,7 @@ for i in range(1,9):
 #same thing here.
 
 def piece_assignment(move,turn):
-    tempcurrent = move[0:2]#gets the first square you came fro
+    tempcurrent = move[0:2]#gets the first square you came from
     tempnew=move[2:4]#gets the square you plan to move to
     current=square_calc(tempcurrent)#these next two lines calculate the exact square values of those squares
     new=square_calc(tempnew)
