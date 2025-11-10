@@ -154,22 +154,23 @@ def on_release(key):
     print('release')
     held = False
 
-with keyboard.Listener(
-        on_press=on_press,
-        on_release=on_release) as listener:
-    listener.join()
+def startKB():
+    with keyboard.Listener(
+            on_press=on_press,
+            on_release=on_release) as listener:
+        listener.join()
 
 
 def motorController(distance, axis):
 
     if distance < 0: #if distance is negative, set direction to HIGH 
-        m1dir.on()
-        m2dir.on()
+        m1dir.off()
+        m2dir.off()
         dist = -distance
     else:
         dist = distance
-        m1dir.off()
-        m2dir.off()
+        m1dir.on()
+        m2dir.on()
 
     #calculate steps based on factors
     steps = int(((dist * squareSize) / rotationLength) * stepsPerRotation)
@@ -233,25 +234,25 @@ def magOn():
 def magOff():
     mag.off()
 
-
+'''
 while True:
     #script that allows for continual manual entering of moves for testing
 
     move = input("put next move (x,y)")
     if move == 'k':
-        #enter keyboard mode
-        while():
-            m1dir.off()
-            m1step.on()
-            time.sleep(motorDelay * .00005)
-            m1step.off()
-            time.sleep(motorDelay * .00005)
-        while():
-            m1dir.on()
-            m1step.on()
-            time.sleep(motorDelay * .00005)
-            m1step.off()
-            time.sleep(motorDelay * .00005)
+        startKB()
+    while():
+        m1dir.off()
+        m1step.on()
+        time.sleep(motorDelay * .00005)
+        m1step.off()
+        time.sleep(motorDelay * .00005)
+    while():
+        m1dir.on()
+        m1step.on()
+        time.sleep(motorDelay * .00005)
+        m1step.off()
+        time.sleep(motorDelay * .00005)
 
     moves = move.split(',')
 
@@ -260,6 +261,31 @@ while True:
 
     motorController(x, 'x')
     motorController(y, 'y')
+'''
+
+def location(x1,y1,x2,y2):
+    motorController(x1,'x')
+    motorController(y1,'y')
+    magOn()
+    time.sleep(2)
+    motorController(x2-x1, 'x')
+    motorController(y2-y1, 'y')
+    magOff()
+    motorController(-x2,'x')
+    motorController(-y2,'y')
+
+
+while True:
+    mag.off()
+    move = input("put next move (x,y) -> (x,y) as 'x,y,x,y'")
+    moves = move.split(',')
+
+    x1 = int(moves[0])
+    y1 = int(moves[1])
+    x2 = int(moves[2])
+    y2 = int(moves[3])
+
+    location(x1,y1,x2,y2)
 
 
 
