@@ -48,12 +48,3 @@ def translate(move):
                 return -1
         return row,column
 
-
-
-move=input("Please enter your move: ")
-if(translate(move[0:2])==-1 or translate(move[2:4])==-1):
-    print("invalid syntax!")
-else:
-    print("Here are the coardinates")
-    print("You want to go from ",translate(move[0:2]))
-    print("and end up at ",translate(move[2:4]))
