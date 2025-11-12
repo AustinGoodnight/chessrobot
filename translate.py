@@ -10,40 +10,40 @@ def translate(move):
         column=0
         match(column_let):
             case 'a':
-                column=9
-            case 'b':
                 column=8
-            case 'c':
+            case 'b':
                 column=7
-            case 'd':
+            case 'c':
                 column=6
-            case 'e':
+            case 'd':
                 column=5
-            case 'f':
+            case 'e':
                 column=4
-            case 'g':
+            case 'f':
                 column=3
-            case 'h':
+            case 'g':
                 column=2
+            case 'h':
+                column=1
             case _:
                 return -1
         match(row_num):
             case '1':
-                row=1
-            case '2':
-                row=2
-            case '3':
-                row=3
-            case '4':
-                row=4
-            case '5':
-                row=5
-            case '6':
-                row=6
-            case '7':
-                row=7
-            case '8':
                 row=8
+            case '2':
+                row=7
+            case '3':
+                row=6
+            case '4':
+                row=5
+            case '5':
+                row=4
+            case '6':
+                row=3
+            case '7':
+                row=2
+            case '8':
+                row=1
             case _:
                 return -1
         return row,column
