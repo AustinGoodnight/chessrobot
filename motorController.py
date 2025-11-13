@@ -93,13 +93,16 @@ motorDelay = .05 #delay between motor pulses in microseconds // lower >> faster 
 
 
 
-
+def binaryPlus(s):
+    #shoutout stack overflow for this one
+    return '{:04b}'.format(1+ int(s,2))
 
 def reedSensors():
     S1.off()
     S0.off()
     S2.off()
     S3.off()
+
     if mux1.is_pressed:
         print('active')
     else:
