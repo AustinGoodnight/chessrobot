@@ -141,13 +141,6 @@ def reedSensors():
 
 
 
-
-
-
-
-
-
-
 def motorController(distance, axis):
 
     if distance < 0: #if distance is negative, set direction to HIGH 
