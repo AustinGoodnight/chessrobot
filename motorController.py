@@ -41,7 +41,7 @@ with fake driver:
 #import libraries
 import time
 from gpiozero import LED, Button
-from pynput import keyboard
+#from pynput import keyboard
 '''
 PIN LAYOUT
 ^ more pins
@@ -100,58 +100,18 @@ def reedSensors():
     S0.off()
     S2.off()
     S3.off()
-    if Button.is_pressed:
+    if mux1.is_pressed:
         print('active')
     else:
         print('inactive')
 
 
 
-#this allows for keyboard control of gantry
-#normally not used, mainly for testing
-def on_press(key):
-    if ((key.char == ('w'))):
-        m1dir.on()
-        for i in range(300):
-            
-            m1step.on()
-            time.sleep(motorDelay * .00005)
-            m1step.off()
-            time.sleep(motorDelay * .00005)
-    if key.char == ('s'):
-        m1dir.off()
-        for i in range(300):
-            m1step.on()
-            time.sleep(motorDelay * .00005)
-            m1step.off()
-            time.sleep(motorDelay * .00005)
 
-    if key.char == ('a'):
-        m2dir.off()
-        for i in range(300):
-            
-            m2step.on()
-            time.sleep(motorDelay * .00005)
-            m2step.off()
-            time.sleep(motorDelay * .00005)
 
-    if key.char == ('d'):
-        m2dir.on()
-        for i in range(300):
-            m2step.on()
-            time.sleep(motorDelay * .00005)
-            m2step.off()
-            time.sleep(motorDelay * .00005)
 
-def on_release(key):
-    print('release')
-    held = False
 
-def startKB():
-    with keyboard.Listener(
-            on_press=on_press,
-            on_release=on_release) as listener:
-        listener.join()
+
 
 
 def motorController(distance, axis):
@@ -258,7 +218,7 @@ def locationOnEdge(x1,y1,x2,y2):
     motorController(y1-1,'y')
     motorController(.5,'x') # to center
     motorController(.5,'y') # to center
-    magOn()
+    mag.on()
     time.sleep(.5)
     motorController(-.5,'x') # back to edge
     motorController(-.5,'y') # back to edge
@@ -266,7 +226,7 @@ def locationOnEdge(x1,y1,x2,y2):
     motorController(y2-y1, 'y')
     motorController(.5,'x') # to center
     motorController(.5,'y') # to center
-    magOff()
+    mag.off()
     motorController(-.5+(-x2)+1,'x') # back to edge
     motorController(-.5+(-y2)-.5,'y') # back to edge
     '''
@@ -279,11 +239,11 @@ def locationOnEdge(x1,y1,x2,y2):
 def locationOffEdge(x1,y1,x2,y2):
     motorController(x1,'x')
     motorController(y1,'y')
-    magOn()
+    mag.on()
     time.sleep(2)
     motorController(x2-x1, 'x')
     motorController(y2-y1, 'y')
-    magOff()
+    mag.off()
     motorController(-x2,'x')
     motorController(-y2,'y')
 
@@ -319,9 +279,12 @@ def spaceTest():
     motorController(-9,'y')
 
 while True:
+    
+
     reedSensors()
-    time.sleep(2)
+    time.sleep(.1)
     '''
+    spaceTest()
     move = input("put next move (x,y) -> (x,y) as 'x,y,x,y'")
     moves = move.split(',')
 
@@ -332,6 +295,7 @@ while True:
 
     locationOffEdge(x1,y1,x2,y2)
     '''
+    
 
 
 
@@ -350,7 +314,7 @@ motorctronoller(3,y)
 
 toCenter()
 
-magOn() # grabs piece
+mag.on() # grabs piece
 
 toCorner()
 
@@ -362,7 +326,7 @@ motorcontroller(1,y)
 #moves it +2x +1y, this would need to be calulated
 
 
-magOff()
+mag.off()
 
 
 #after should probably go to corner to recalibrate, etc. 
