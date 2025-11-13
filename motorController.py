@@ -63,8 +63,8 @@ with fake driver:
 
 
 import time
-from gpiozero import LED
-from pynput import keyboard
+from gpiozero import LED, Button
+#from pynput import keyboard
 '''
 PIN LAYOUT
 ^ more pins
@@ -90,75 +90,47 @@ m2dir = LED(19)
 
 mag = LED(6)
 
+S = [0,0,0,0]
+S0 = LED(17)
+S1 = LED(27)
+S2 = LED(22)
+S3 = LED(23)
+
+mux1 = Button(5, pull_up=True)
+mux2 = Button(12, pull_up=True)
+mux3 = Button(24, pull_up=True)
+mux4 = Button(25, pull_up=True)
 
 
-'''
-stepmode = 8 #inverse of step division // lower is faster but less precise
-    #this is set on the board by default, has to match the physical board
 
-squareSize = 58.7475 #size of squares
-
-rotationLength = 54 #distance belt moves by one rotation
-
-motorDelay = .05 #delay between motor pulses in microseconds // lower >> faster speed
-
-halfPythagorean = 1/2 * squareSize * 1.41 #this is the distance to the center of any square from the corner
-
-stepsPerRotation = 200 * stepmode #number of steps per rotation 
-'''
-# ^not using that anymore
-# one rotation is 39mm
 rotationLength = 39.0
 stepsPerRotation = 3200
-squareSize = 58.7475 #size of squares
-halfPythagorean = 1/2 * squareSize * 1.41 #this is the distance to the center of any square from the corner
+squareSize = 58.7475 #size of squares -> real size is 55, meaning there's a mismatch between this value and rotationLength
+                    # for the time being, it works and I don't think it would make much sense to change it
+halfPythagorean = 1/2 * squareSize * 1.41 #this is the distance to the center of any square from the corner // NOT USED
 motorDelay = .05 #delay between motor pulses in microseconds // lower >> faster speed
 
 
 
-def on_press(key):
-    if ((key.char == ('w'))):
-        m1dir.on()
-        for i in range(300):
-            
-            m1step.on()
-            time.sleep(motorDelay * .00005)
-            m1step.off()
-            time.sleep(motorDelay * .00005)
-    if key.char == ('s'):
-        m1dir.off()
-        for i in range(300):
-            m1step.on()
-            time.sleep(motorDelay * .00005)
-            m1step.off()
-            time.sleep(motorDelay * .00005)
 
-    if key.char == ('a'):
-        m2dir.off()
-        for i in range(300):
-            
-            m2step.on()
-            time.sleep(motorDelay * .00005)
-            m2step.off()
-            time.sleep(motorDelay * .00005)
 
-    if key.char == ('d'):
-        m2dir.on()
-        for i in range(300):
-            m2step.on()
-            time.sleep(motorDelay * .00005)
-            m2step.off()
-            time.sleep(motorDelay * .00005)
+def reedSensors():
+    S1.off()
+    S0.off()
+    S2.off()
+    S3.off()
+    if mux1.is_pressed:
+        print('active')
+    else:
+        print('inactive')
 
-def on_release(key):
-    print('release')
-    held = False
 
-def startKB():
-    with keyboard.Listener(
-            on_press=on_press,
-            on_release=on_release) as listener:
-        listener.join()
+
+
+
+
+
+
 
 
 def motorController(distance, axis):
@@ -331,6 +303,11 @@ def spaceTest():
     motorController(-9,'y')
 
 while True:
+    
+
+    reedSensors()
+    time.sleep(.1)
+    '''
     spaceTest()
     move = input("put next move (x,y) -> (x,y) as 'x,y,x,y'")
     moves = move.split(',')
@@ -341,6 +318,8 @@ while True:
     y2 = float(moves[3])
 
     locationOffEdge(x1,y1,x2,y2)
+    '''
+    
 
 
 
