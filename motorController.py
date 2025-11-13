@@ -88,7 +88,7 @@ m2step = LED(16) #y
 m2dir = LED(19)
 
 
-mag = LED(13)
+mag = LED(6)
 
 
 
@@ -263,7 +263,32 @@ while True:
     motorController(y, 'y')
 '''
 
-def location(x1,y1,x2,y2):
+def locationOnEdge(x1,y1,x2,y2):
+    motorController(.5,'x') # to edge
+    motorController(.5,'y') # to edge
+    motorController(x1-1,'x')
+    motorController(y1-1,'y')
+    motorController(.5,'x') # to center
+    motorController(.5,'y') # to center
+    magOn()
+    time.sleep(.5)
+    motorController(-.5,'x') # back to edge
+    motorController(-.5,'y') # back to edge
+    motorController(x2-x1, 'x')
+    motorController(y2-y1, 'y')
+    motorController(.5,'x') # to center
+    motorController(.5,'y') # to center
+    magOff()
+    motorController(-.5+(-x2)+1,'x') # back to edge
+    motorController(-.5+(-y2)-.5,'y') # back to edge
+    '''
+    motorController((-x2)+1,'x')
+    motorController((-y2)+1,'y')
+    #motorController(-.5,'x') # to (0,0)
+    motorController(-.5,'y') # to (0,0)
+    '''
+
+def locationOffEdge(x1,y1,x2,y2):
     motorController(x1,'x')
     motorController(y1,'y')
     magOn()
@@ -275,17 +300,47 @@ def location(x1,y1,x2,y2):
     motorController(-y2,'y')
 
 
-while True:
+def edgeTraceX():
+    mag.on()
+    motorController(1.5,'y')
+    motorController(8, 'x')
+
+    time.sleep(5)
+    motorController(-8,'x')
+    motorController(-1.5,'y')
     mag.off()
+
+def edgeTraceY():
+    mag.on()
+    motorController(1.5,'x')
+    motorController(8, 'y')
+
+    time.sleep(5)
+    motorController(-8,'y')
+    motorController(-1.5,'x')
+    mag.off()
+
+def spaceTest():
+    mag.on()
+    motorController(9,'y')
+    for i in range(8):
+        motorController(1, 'x')
+        time.sleep(2)
+
+    motorController(-8,'x')
+    motorController(-9,'y')
+
+while True:
+    spaceTest()
     move = input("put next move (x,y) -> (x,y) as 'x,y,x,y'")
     moves = move.split(',')
 
-    x1 = int(moves[0])
-    y1 = int(moves[1])
-    x2 = int(moves[2])
-    y2 = int(moves[3])
+    x1 = float(moves[0])
+    y1 = float(moves[1])
+    x2 = float(moves[2])
+    y2 = float(moves[3])
 
-    location(x1,y1,x2,y2)
+    locationOffEdge(x1,y1,x2,y2)
 
 
 
