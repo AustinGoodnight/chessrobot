@@ -99,18 +99,19 @@ def binaryPlus(s):
     return '{:04b}'.format(1+ int(s,2))
 
 def increment_4bit(bits):
-    
-    # Convert bit array → integer
+
+    # Convert bit array → int
     value = (bits[0] << 3) | (bits[1] << 2) | (bits[2] << 1) | bits[3]
-    
-    # Add 1 mod 16
-    value = (value + 1) & 0xF  # mask to keep 4 bits
-    
-    # Convert back → bit array
-    return [(value >> 3) & 1,
-            (value >> 2) & 1,
-            (value >> 1) & 1,
-            value & 1]
+
+    # Increment mod 16
+    value = (value + 1) & 0xF
+
+    # Write back into the same list
+    bits[0] = (value >> 3) & 1
+    bits[1] = (value >> 2) & 1
+    bits[2] = (value >> 1) & 1
+    bits[3] = value & 1
+
 
 
 
