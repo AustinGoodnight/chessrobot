@@ -41,6 +41,7 @@ with fake driver:
 #import libraries
 import time
 from gpiozero import LED, Button
+import numpy as np
 #from pynput import keyboard
 '''
 PIN LAYOUT
@@ -97,16 +98,46 @@ def binaryPlus(s):
     #shoutout stack overflow for this one
     return '{:04b}'.format(1+ int(s,2))
 
+
+reed = np.zeros((8,8))
+
 def reedSensors():
     S1.off()
     S0.off()
     S2.off()
     S3.off()
+    s = '0000'
+    for i in range(16):
+        binaryPlus(s)
+        if s[0] == '1':
+            S0.on()
+        else: 
+            S0.off()
+        if s[1] == '1':
+            S1.on()
+        else: 
+            S1.off()
+        if s[2] == '1':
+            S2.on()
+        else: 
+            S2.off()
+        if s[3] == '1':
+            S3.on()
+        else: 
+            S3.off()
+        if (i < 8):
+            reed[0,i] = mux1.is_pressed
+            reed[2, i] = mux2.is_pressed
+            reed[4, i] = mux3.is_pressed
+            reed[6, i] = mux4.is_pressed
+        else:
+            reed[1,i-8] = mux1.is_pressed
+            reed[3,i-8] = mux2.is_pressed
+            reed[5,i-8] = mux3.is_pressed
+            reed[7,i-8] = mux4.is_pressed
+    for row in reed:
+        print(row)
 
-    if mux1.is_pressed:
-        print('active')
-    else:
-        print('inactive')
 
 
 
