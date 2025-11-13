@@ -123,7 +123,7 @@ def reedSensors():
     S3.off()
     s = [0,0,0,0]
     for i in range(16):
-        increment_4bit(s)
+        
         if s[0] == '1':
             S0.on()
         else: 
@@ -150,6 +150,8 @@ def reedSensors():
             reed[3,i-8] = mux2.is_pressed
             reed[5,i-8] = mux3.is_pressed
             reed[7,i-8] = mux4.is_pressed
+        increment_4bit(s)
+        print(s)
     for row in reed:
         print(row)
 
