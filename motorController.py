@@ -98,6 +98,21 @@ def binaryPlus(s):
     #shoutout stack overflow for this one
     return '{:04b}'.format(1+ int(s,2))
 
+def increment_4bit(bits):
+    
+    # Convert bit array → integer
+    value = (bits[0] << 3) | (bits[1] << 2) | (bits[2] << 1) | bits[3]
+    
+    # Add 1 mod 16
+    value = (value + 1) & 0xF  # mask to keep 4 bits
+    
+    # Convert back → bit array
+    return [(value >> 3) & 1,
+            (value >> 2) & 1,
+            (value >> 1) & 1,
+            value & 1]
+
+
 
 reed = np.zeros((8,8))
 
@@ -106,9 +121,9 @@ def reedSensors():
     S0.off()
     S2.off()
     S3.off()
-    s = '0000'
+    s = [0,0,0,0]
     for i in range(16):
-        binaryPlus(s)
+        increment_4bit(s)
         if s[0] == '1':
             S0.on()
         else: 
