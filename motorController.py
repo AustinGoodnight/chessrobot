@@ -30,40 +30,17 @@ MOTOR III
 with real driver:
     not tested but seems to work flawlessy
 with fake driver:
-
-
-
-
-'''
-
-'''
-
-8
-
-7
-
-6
-
-5
-
-4
-
-3
-
-2
-
-1
-
-0 1 2 3 4 5 6 7 8
-
-
-0 = storage
-
 '''
 
 
+
+
+
+
+
+#import libraries
 import time
-from gpiozero import LED
+from gpiozero import LED, Button
 from pynput import keyboard
 '''
 PIN LAYOUT
@@ -81,41 +58,57 @@ USB PORT SIDE
 #this assigns each motor to an output on the pi
 #one is an alernating control that moves the motor once per HIGH/LOW
 #the second changes the direction of this movement when HIGH
-m1step = LED(20) #x
+
+
+#x-direction
+m1step = LED(20) 
 m1dir = LED(26)
 
-m2step = LED(16) #y
+#y-direction
+m2step = LED(16)
 m2dir = LED(19)
 
-
+#magnet on/off on = on. off = off.
 mag = LED(6)
 
+S = [0,0,0,0]
+S0 = LED(17)
+S1 = LED(27)
+S2 = LED(22)
+S3 = LED(23)
+
+mux1 = Button(5, pull_up=True)
+mux2 = Button(12, pull_up=True)
+mux3 = Button(24, pull_up=True)
+mux4 = Button(25, pull_up=True)
 
 
-'''
-stepmode = 8 #inverse of step division // lower is faster but less precise
-    #this is set on the board by default, has to match the physical board
 
-squareSize = 58.7475 #size of squares
-
-rotationLength = 54 #distance belt moves by one rotation
-
-motorDelay = .05 #delay between motor pulses in microseconds // lower >> faster speed
-
-halfPythagorean = 1/2 * squareSize * 1.41 #this is the distance to the center of any square from the corner
-
-stepsPerRotation = 200 * stepmode #number of steps per rotation 
-'''
-# ^not using that anymore
-# one rotation is 39mm
 rotationLength = 39.0
 stepsPerRotation = 3200
-squareSize = 58.7475 #size of squares
-halfPythagorean = 1/2 * squareSize * 1.41 #this is the distance to the center of any square from the corner
+squareSize = 58.7475 #size of squares -> real size is 55, meaning there's a mismatch between this value and rotationLength
+                    # for the time being, it works and I don't think it would make much sense to change it
+halfPythagorean = 1/2 * squareSize * 1.41 #this is the distance to the center of any square from the corner // NOT USED
 motorDelay = .05 #delay between motor pulses in microseconds // lower >> faster speed
 
 
 
+
+
+def reedSensors():
+    S1.off()
+    S0.off()
+    S2.off()
+    S3.off()
+    if Button.is_pressed:
+        print('active')
+    else:
+        print('inactive')
+
+
+
+#this allows for keyboard control of gantry
+#normally not used, mainly for testing
 def on_press(key):
     if ((key.char == ('w'))):
         m1dir.on()
@@ -225,15 +218,6 @@ def toCorner():
 
         time.sleep(motorDelay * .0001)
 
-
-#directly addressing these is probably better
-#originally I thought there might be more coding needed
-def magOn():
-    mag.on()
-
-def magOff():
-    mag.off()
-
 '''
 while True:
     #script that allows for continual manual entering of moves for testing
@@ -264,6 +248,10 @@ while True:
 '''
 
 def locationOnEdge(x1,y1,x2,y2):
+    #goes from 0,0 to x1,y1
+    #grabs piece then goes to x2,y2
+    #then goes back to 0,0
+    #all along the edges
     motorController(.5,'x') # to edge
     motorController(.5,'y') # to edge
     motorController(x1-1,'x')
@@ -331,7 +319,9 @@ def spaceTest():
     motorController(-9,'y')
 
 while True:
-    spaceTest()
+    reedSensors()
+    time.sleep(2)
+    '''
     move = input("put next move (x,y) -> (x,y) as 'x,y,x,y'")
     moves = move.split(',')
 
@@ -341,6 +331,7 @@ while True:
     y2 = float(moves[3])
 
     locationOffEdge(x1,y1,x2,y2)
+    '''
 
 
 
