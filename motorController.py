@@ -323,24 +323,23 @@ def spaceTest():
     motorController(-8,'x')
     motorController(-9,'y')
 
-def translate(x,y):
-    x = x;
+def translate(y):
     if y == 'a':
-        y = 1
+        yout = 1
     if y == 'b':
-        y = 2
+        yout = 2
     if y == 'c':
-        y = 3
+        yout = 3
     if y == 'd':
-        y = 4
+        yout = 4
     if y == 'e':
-        y = 5
+        yout = 5
     if y == 'f':
-        y = 6
+        yout = 6
     if y == 'g':
-        y = 7
+        yout = 7
     if y == 'h':
-        y = 8
+        yout = 8
 
 
 
@@ -361,11 +360,9 @@ while True:
     y2 = float(moves[3])
     '''
     print("Moving from ", moves[0], moves[1], " to ", moves[2], moves[3])
-    translate(moves[0], moves[1])
-    translate(moves[2], moves[3])
-    print("Box Coordinates ", moves[0], moves[1], move[2], move[3])
+    print("Box Coordinates ", float(moves[0]), translate(moves[1]), float(move[2]), translate(move[3]))
 
-    locationOnEdge(moves[0],moves[1],moves[2],moves[3])
+    locationOnEdge(float(moves[0]), translate(moves[1]), float(move[2]), translate(move[3]))
     
 
 
