@@ -326,10 +326,6 @@ def spaceTest():
 while True:
     
 
-    reedSensors()
-    time.sleep(.1)
-    '''
-    spaceTest()
     move = input("put next move (x,y) -> (x,y) as 'x,y,x,y'")
     moves = move.split(',')
 
@@ -338,8 +334,7 @@ while True:
     x2 = float(moves[2])
     y2 = float(moves[3])
 
-    locationOffEdge(x1,y1,x2,y2)
-    '''
+    locationOnEdge(x1,y1,x2,y2)
     
 
 
