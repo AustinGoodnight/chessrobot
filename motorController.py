@@ -353,16 +353,15 @@ while True:
     if moves[0] == 'e':
         quit()
 
-    '''
-    x1 = float(moves[0])
-    y1 = float(moves[1])
-    x2 = float(moves[2])
-    y2 = float(moves[3])
-    '''
-    print("Moving from ", moves[0], moves[1], " to ", moves[2], moves[3])
-    print("Box Coordinates ", float(moves[1]), translate(moves[0]), float(move[3]), translate(move[2]))
 
-    locationOnEdge(float(moves[1]), translate(moves[0]), float(move[3]), translate(move[2]))
+    x1 = float(moves[1])
+    y1 = translate(moves[0])
+    x2 = float(moves[3])
+    y2 = translate(moves[2])
+
+    print("Moving from ", moves[0], moves[1], " to ", moves[2], moves[3])
+
+    locationOnEdge(x1,y1,x2,y2)
     
 
 
