@@ -59,13 +59,6 @@ _storage_squares.append((0, 0))
 _storage_squares.append((0, 9))
 
 
-# Sort by distance from origin (0,0), farthest first
-_storage_squares = sorted(
-    _storage_squares,
-    key=lambda p: (p[0] ** 2 + p[1] ** 2),
-    reverse=True
-)
-
 # Now _storage_squares has 26 unique positions, each can store 2 pieces → 52 slots.
 
 
