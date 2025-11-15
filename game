@@ -138,7 +138,7 @@ def spaceTest():
     motorController(-8,'x')
     motorController(-9,'y')
 
-def translatey(y):
+def translatex(y):
     #char input
     #translate UCI to motorController
     if y == 'a':
@@ -159,7 +159,7 @@ def translatey(y):
         yout = 8
     return yout
 
-def translatex(x):
+def translatey(x):
     toInt = int(x)
     #translate UCI to motorController
     return toInt-x
