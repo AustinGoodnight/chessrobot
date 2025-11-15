@@ -351,6 +351,9 @@ while True:
     move = input("put next move (x,y) -> (x,y) as 'x,y,x,y'")
     moves = move.split(',')
 
+    if moves[0] == 'e':
+        quit()
+
     '''
     x1 = float(moves[0])
     y1 = float(moves[1])
