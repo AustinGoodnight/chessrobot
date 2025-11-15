@@ -58,7 +58,6 @@ for x in range(1, 9):
 _storage_squares.append((0, 0))
 _storage_squares.append((0, 9))
 
-
 # Now _storage_squares has 26 unique positions, each can store 2 pieces → 52 slots.
 
 
@@ -404,11 +403,21 @@ def main():
             print_board_and_status(board)
 
             if board.turn == chess.WHITE:
-                # user input
-                move = get_user_move(board)
+                # computer input
+                print("Engine thinking...")
+
+                # Time control for engine; adjust as you like
+                result = engine.play(board, chess.engine.Limit(time=0.5))
+                move = result.move
+
+                if move is None:
+                    print("Engine has no move (checkmate/stalemate).")
+                    break
+
                 move_uci = move.uci()
                 is_capture = board.is_capture(move)
 
+                print(f"Engine plays: {move_uci}")
                 board.push(move)
                 send_move_to_physical_board(move_uci, is_capture)
 
