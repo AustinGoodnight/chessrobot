@@ -272,8 +272,8 @@ def locationOnEdge(x1,y1,x2,y2):
     motorController(.5,'x') # to center
     motorController(.5,'y') # to center
     mag.off()
-    motorController(-.5+(-x2)+1,'x') # back to edge
-    motorController(-.5+(-y2)-.5,'y') # back to edge
+    motorController(-1+(-x2),'x') # back to edge
+    motorController(-.5+(-y2),'y') # back to edge
     '''
     motorController((-x2)+1,'x')
     motorController((-y2)+1,'y')
