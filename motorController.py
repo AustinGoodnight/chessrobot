@@ -340,6 +340,7 @@ def translate(y):
         yout = 7
     if y == 'h':
         yout = 8
+    return yout
 
 
 
