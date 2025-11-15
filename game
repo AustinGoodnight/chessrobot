@@ -401,7 +401,7 @@ def main():
     try:
         while not board.is_game_over():
             print_board_and_status(board)
-
+            time.sleep(20)
             if board.turn == chess.WHITE:
                 # computer input
                 print("Engine thinking...")
