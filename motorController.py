@@ -360,9 +360,9 @@ while True:
     y2 = float(moves[3])
     '''
     print("Moving from ", moves[0], moves[1], " to ", moves[2], moves[3])
-    print("Box Coordinates ", float(moves[0]), translate(moves[1]), float(move[2]), translate(move[3]))
+    print("Box Coordinates ", float(moves[1]), translate(moves[0]), float(move[3]), translate(move[2]))
 
-    locationOnEdge(float(moves[0]), translate(moves[1]), float(move[2]), translate(move[3]))
+    locationOnEdge(float(moves[1]), translate(moves[0]), float(move[3]), translate(move[2]))
     
 
 
