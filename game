@@ -125,10 +125,10 @@ def moveCapturedToStorage(x_victim, y_victim, store_x, store_y, slot_pos):
 
     Assumes:
       - x_victim, y_victim are 1..8 (normal board coords).
-      - store_x, store_y are edge coords (0..9 range).
+      - store_x, store_y are edge coords in the 0..9 range.
       - slot_pos:
           0 → drop at edge
-          1 → drop slightly inward from the edge
+          1 → drop slightly inward from the edge (center-ish)
     """
 
     # 1) Go from (0,0) to the edge near the board
@@ -156,38 +156,58 @@ def moveCapturedToStorage(x_victim, y_victim, store_x, store_y, slot_pos):
     motorController(store_y - y_victim, 'y')
 
     # 7) Drop the piece
-    #    If slot_pos == 0: drop directly at edge position.
-    #    If slot_pos == 1: move 0.5 inward from the edge, drop, then move back.
+    #    slot_pos == 0: drop directly at edge position.
+    #    slot_pos == 1: move 0.5 inward from the edge, drop, then move back.
     if slot_pos == 0:
-        # Edge slot
+        # Edge slot: no extra offset
         mag.off()
     else:
-        # Center slot inside that storage square
-        if store_y == 0:
-            # top edge, board interior is +y
+        # Center slot: choose "inward" direction based on which edge we're on,
+        # making sure we NEVER go negative from 0.
+        if store_y == 0 and 0 < store_x < 9:
+            # Top edge, interior is +y
             motorController(.5, 'y')
             mag.off()
             motorController(-.5, 'y')
 
-        elif store_x == 0:
-            # left edge, board interior is +x
+        elif store_x == 0 and 0 < store_y <= 8:
+            # Left edge, interior is +x
             motorController(.5, 'x')
             mag.off()
             motorController(-.5, 'x')
 
-        elif store_x == 9:
-            # right edge, board interior is -x
+        elif store_x == 9 and 0 < store_y <= 8:
+            # Right edge, interior is -x (safe because x=9 > 0)
+            motorController(-.5, 'x')
+            mag.off()
+            motorController(.5, 'x')
+
+        elif store_y == 8 and 1 <= store_x <= 8:
+            # (If you ever use bottom edge): interior is -y
+            motorController(-.5, 'y')
+            mag.off()
+            motorController(.5, 'y')
+
+        elif store_x == 0 and store_y == 0:
+            # Top-left corner: pick one safe inward direction, e.g. +x
+            motorController(.5, 'x')
+            mag.off()
+            motorController(-.5, 'x')
+
+        elif store_x == 9 and store_y == 0:
+            # Top-right corner: safe inward is -x
             motorController(-.5, 'x')
             mag.off()
             motorController(.5, 'x')
 
         else:
-            # Shouldn't happen for valid storage positions, but fail-safe:
+            # Fallback: if we somehow get a weird coord, just drop at edge
             mag.off()
 
     # 8) Return from storage back to origin along edges
     motorController(-store_x, 'x')
     motorController(-store_y, 'y')
+
 
 
 
