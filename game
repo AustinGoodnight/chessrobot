@@ -32,23 +32,32 @@ ENGINE_PATH = "stockfish"
 storage = 0
 
 
+# Storage grid definition:
+# 10 (width) x 9 (height) matrix, indexed at (row=x, col=y) = (0..8, 0..9)
+# Board squares: x = 1..8, y = 1..8
+# Storage:
+#   - primary: row 0, cols 1..8  (the "0 row" above the board)
+#   - extra:   col 0 and col 9, rows 1..8
+#   - corners: (0,0) and (0,9)
+
 _storage_squares = []
 
-# 1) Top edge above the board: (1..8, 0) → will be used FIRST
-for x in range(1, 9):
-    _storage_squares.append((x, 0))
-
-# 2) Left edge of the board: (0, 1..8)
+# 1) Row 0 above the board: (x=0, y=1..8) → used FIRST
 for y in range(1, 9):
     _storage_squares.append((0, y))
 
-# 3) Right edge of the board: (9, 1..8)
-for y in range(1, 9):
-    _storage_squares.append((9, y))
+# 2) Left edge of the board: (x=1..8, y=0)
+for x in range(1, 9):
+    _storage_squares.append((x, 0))
 
-# 4) Optional top corners (used last)
+# 3) Right edge of the board: (x=1..8, y=9)
+for x in range(1, 9):
+    _storage_squares.append((x, 9))
+
+# 4) Corners on row 0: (0,0) and (0,9)
 _storage_squares.append((0, 0))
-_storage_squares.append((9, 0))
+_storage_squares.append((0, 9))
+
 
 # Sort by distance from origin (0,0), farthest first
 _storage_squares = sorted(
