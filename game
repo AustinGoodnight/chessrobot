@@ -84,7 +84,7 @@ def locationOnEdge(x1,y1,x2,y2):
     motorController(.5,'y') # to center
     mag.off()
     motorController((-x2),'x') # back to edge
-    motorController((-y2),'y') # back to edge
+    motorController((-y2)+.5,'y') # back to edge
 
 def locationOffEdge(x1,y1,x2,y2):
     #unused function, could be used for pawn moves but currently is not
