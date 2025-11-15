@@ -189,12 +189,12 @@ def storageL():
 def send_move_to_physical_board(move_uci: str, is_capture: bool):
 
     if is_capture == False:
-        locationOnEdge(translatex(move_uci[0]), translatey(move_uci[1]), translatex(move_uci[2]), translatey(move_uci[3]))
+        
         print(translatex(move_uci[0]), translatey(move_uci[1]), translatex(move_uci[2]), translatey(move_uci[3]))
     else:
         store = storageL()
-        locationOnEdge(translatex(move_uci[2]), translatey(move_uci[3], store[0], store[1]))  #move piece out of way
-        locationOnEdge(translatex(move_uci[0]), translatey(move_uci[1]), translatex(move_uci[2]), translatey(move_uci[3]))
+        locationOnEdge(translatey(move_uci[3], translatex(move_uci[2]), store[0], store[1]))  #move piece out of way
+        locationOnEdge(translatey(move_uci[1]),translatex(move_uci[0]), translatey(move_uci[3]), translatex(move_uci[2]))
         # move piece to open square
 
     print(f"[ROBOT] move={move_uci}, capture={is_capture}")
