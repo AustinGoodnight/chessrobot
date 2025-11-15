@@ -191,38 +191,6 @@ def motorController(distance, axis):
     m1dir.off()
     m2dir.off()
 
-
-def toCenter():
-
-    #moves piece from corner to center
-
-    steps = (halfPythagorean / rotationLength) * stepsPerRotation #calc steps
-
-    #move to center
-
-    for i in steps:
-
-    #output to pin (m1)
-
-    #output to pin (m2)
-
-        time.sleep(motorDelay * .0001)
-
-
-def toCorner():
-
-    steps = (halfPythagorean / rotationLength) * stepsPerRotation #calc steps
-
-    for i in steps:
-
-    #direction pin active
-
-    #output to pin (m1)
-
-    #output to pin (m2)
-
-        time.sleep(motorDelay * .0001)
-
 '''
 while True:
     #script that allows for continual manual entering of moves for testing
@@ -323,7 +291,8 @@ def spaceTest():
     motorController(-8,'x')
     motorController(-9,'y')
 
-def translate(y):
+def translatey(y):
+    #char input
     if y == 'a':
         yout = 1
     if y == 'b':
@@ -342,7 +311,8 @@ def translate(y):
         yout = 8
     return yout
 
-
+def translatex(x):
+    return 9-x
 
 
 while True:

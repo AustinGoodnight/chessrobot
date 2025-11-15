@@ -1,11 +1,12 @@
-import chess
+import chessCode
 import array
 import time
 
-board = chess.Board() #this defines what the chess board is.
+
+board = chessCode.Board() #this defines what the chess board is.
 
 board.legal_moves #not quite sure what this does but I think its a library of legal moves
-chess.Move.from_uci("a8a1") in board.legal_moves 
+chessCode.Move.from_uci("a8a1") in board.legal_moves 
 #from what I can tell the code above defines what moves are in the uci to then transfer them to board.legal_moves library.
 
 #to tell it where to start, you could have an array of all the values of the squares, that being 0-63.  
@@ -325,7 +326,7 @@ def en_passant(new_move,turn):
     if turn==1:#this of course means it is white's turn
         if (current in white_pawns and (new==current+9 or new==current+7) and new-8 in black_pawns):
             board.remove_piece_at(new-8)
-            chess.Move(current,new)
+            chessCode.Move(current,new)
             piece_assignment(new_move, turn)
             print(white_pawns)
             return 1
@@ -335,7 +336,7 @@ def en_passant(new_move,turn):
         print("turn error")
         if (current in black_pawns and (new==current-9 or new==current-7) and new+8 in white_pawns):
             board.remove_piece_at(new+8)
-            chess.Move(current,new)
+            chessCode.Move(current,new)
             piece_assignment(new_move,turn)
             return 1
         else:
@@ -355,7 +356,7 @@ def pawn_taking(new_move,turn):
     #it then checks if the current square has a white pawn.
     #finally, it chescks whether or not the new square is one square diagonal to the current square
             board.remove_piece_at(new_square)
-            chess.Move(current_square,new_square)
+            chessCode.Move(current_square,new_square)
             piece_assignment(new_move,turn)
             return 1
         else:
@@ -366,7 +367,7 @@ def pawn_taking(new_move,turn):
     #for that side, moving forward is the same as subtracting from your square value.
     #there fore, instead of +9 or +7, you get -9 and -7
             board.remove_piece_at(new_square)
-            chess.Move(current_square,new_square)
+            chessCode.Move(current_square,new_square)
             piece_assignment(new_move,turn)
             return 1
         else:
@@ -409,7 +410,7 @@ while(board.is_checkmate()==False):
         else:
             turn=1
         first_turn=False
-    except chess.IllegalMoveError:
+    except chessCode.IllegalMoveError:
         if en_passant(move,turn)==1:
             en=2
         elif pawn_taking(move,turn)==1:
