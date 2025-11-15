@@ -323,18 +323,46 @@ def spaceTest():
     motorController(-8,'x')
     motorController(-9,'y')
 
+def translate(x,y):
+    x = x;
+    if y == 'a':
+        y = 1
+    if y == 'b':
+        y = 2
+    if y == 'c':
+        y = 3
+    if y == 'd':
+        y = 4
+    if y == 'e':
+        y = 5
+    if y == 'f':
+        y = 6
+    if y == 'g':
+        y = 7
+    if y == 'h':
+        y = 8
+
+
+
+
 while True:
     
 
     move = input("put next move (x,y) -> (x,y) as 'x,y,x,y'")
     moves = move.split(',')
 
+    '''
     x1 = float(moves[0])
     y1 = float(moves[1])
     x2 = float(moves[2])
     y2 = float(moves[3])
+    '''
+    print("Moving from ", moves[0], moves[1], " to ", moves[2], moves[3])
+    translate(moves[0], moves[1])
+    translate(moves[2], moves[3])
+    print("Box Coordinates ", moves[0], moves[1], move[2], move[3])
 
-    locationOnEdge(x1,y1,x2,y2)
+    locationOnEdge(moves[0],moves[1],moves[2],moves[3])
     
 
 
