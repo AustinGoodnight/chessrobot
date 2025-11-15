@@ -160,8 +160,9 @@ def translatey(y):
     return yout
 
 def translatex(x):
+    toInt = int(x)
     #translate UCI to motorController
-    return 9-x
+    return toInt-x
 
 def storageL():
     if storage < 9:
