@@ -31,6 +31,36 @@ ENGINE_PATH = "stockfish"
 
 storage = 0
 
+
+# Build the list of candidate storage squares:
+_storage_squares = []
+
+# Top edge above the board: (1..8, 0)
+for x in range(1, 9):
+    _storage_squares.append((x, 0))
+
+# Left edge of the board: (0, 1..8)
+for y in range(1, 9):
+    _storage_squares.append((0, y))
+
+# Right edge of the board: (9, 1..8)
+for y in range(1, 9):
+    _storage_squares.append((9, y))
+
+# Optional top corners for maximum distance
+_storage_squares.append((0, 0))
+_storage_squares.append((9, 0))
+
+# Sort by distance from origin (0,0), farthest first
+_storage_squares = sorted(
+    _storage_squares,
+    key=lambda p: (p[0] ** 2 + p[1] ** 2),
+    reverse=True
+)
+
+# Now _storage_squares has 26 unique positions, each can store 2 pieces → 52 slots.
+
+
 def motorController(distance, axis):
 
     if distance < 0: #if distance is negative, set direction to HIGH 
@@ -85,6 +115,81 @@ def locationOnEdge(x1,y1,x2,y2):
     mag.off()
     motorController((-x2),'x') # back to edge
     motorController((-y2),'y') # back to edge
+
+
+def moveCapturedToStorage(x_victim, y_victim, store_x, store_y, slot_pos):
+    """
+    Move from origin to the victim square (x_victim,y_victim), pick up the piece,
+    then travel along the edge grid to the storage coordinate (store_x,store_y),
+    drop it, and return to origin.
+
+    Assumes:
+      - x_victim, y_victim are 1..8 (normal board coords).
+      - store_x, store_y are edge coords (0..9 range).
+      - slot_pos:
+          0 → drop at edge
+          1 → drop slightly inward from the edge
+    """
+
+    # 1) Go from (0,0) to the edge near the board
+    motorController(.5, 'x')  # to board edge
+    motorController(.5, 'y')  # to board edge
+
+    # 2) Slide along the edge to the victim square's file/rank
+    motorController(x_victim - 1, 'x')
+    motorController(y_victim - 1, 'y')
+
+    # 3) Go from edge to center of victim square
+    motorController(.5, 'x')
+    motorController(.5, 'y')
+
+    # 4) Grab the captured piece
+    mag.on()
+    time.sleep(.5)
+
+    # 5) Back from center to edge at that square
+    motorController(-.5, 'x')
+    motorController(-.5, 'y')
+
+    # 6) Move along the edge grid to the storage position (integer steps only)
+    motorController(store_x - x_victim, 'x')
+    motorController(store_y - y_victim, 'y')
+
+    # 7) Drop the piece
+    #    If slot_pos == 0: drop directly at edge position.
+    #    If slot_pos == 1: move 0.5 inward from the edge, drop, then move back.
+    if slot_pos == 0:
+        # Edge slot
+        mag.off()
+    else:
+        # Center slot inside that storage square
+        if store_y == 0:
+            # top edge, board interior is +y
+            motorController(.5, 'y')
+            mag.off()
+            motorController(-.5, 'y')
+
+        elif store_x == 0:
+            # left edge, board interior is +x
+            motorController(.5, 'x')
+            mag.off()
+            motorController(-.5, 'x')
+
+        elif store_x == 9:
+            # right edge, board interior is -x
+            motorController(-.5, 'x')
+            mag.off()
+            motorController(.5, 'x')
+
+        else:
+            # Shouldn't happen for valid storage positions, but fail-safe:
+            mag.off()
+
+    # 8) Return from storage back to origin along edges
+    motorController(-store_x, 'x')
+    motorController(-store_y, 'y')
+
+
 
 def locationOffEdge(x1,y1,x2,y2):
     #unused function, could be used for pawn moves but currently is not
@@ -173,51 +278,50 @@ def translatey(x):
 
 
 def storageL():
-    if storage < 9:
-        return [0, 9-storage]
-    if storage > 9:
-        return [9, storage-9]
-    else:
-        return [storage - 9, 0]
+
+    global storage
+
+    square_index = storage // 2       # which storage square
+    slot_pos = storage % 2            # 0 or 1 inside that square
+
+    base_x, base_y = _storage_squares[square_index]
+    return base_x, base_y, slot_pos
+
 
 def send_move_to_physical_board(move_uci: str, is_capture: bool):
     global storage
 
-    # UCI: [0]=from_file, [1]=from_rank, [2]=to_file, [3]=to_rank
     from_file = move_uci[0]
     from_rank = move_uci[1]
     to_file   = move_uci[2]
     to_rank   = move_uci[3]
 
-    # Logical indices in 1..8, top-left grid
     file_from_idx = translatex(from_file)   # 1..8 left→right
     rank_from_idx = translatey(from_rank)   # 1..8 top→bottom
     file_to_idx   = translatex(to_file)
     rank_to_idx   = translatey(to_rank)
 
-    # If axes are swapped, feed (rank, file) into locationOnEdge
-    # instead of (file, rank).
+    # axes swapped as before
     x1 = rank_from_idx
     y1 = file_from_idx
     x2 = rank_to_idx
     y2 = file_to_idx
 
     if not is_capture:
-        # simple move
         locationOnEdge(x1, y1, x2, y2)
         print(f"move coords (from→to): ({x1},{y1}) -> ({x2},{y2})")
 
     else:
-        # move captured piece to storage square, then attacker to destination
-        store_x, store_y = storageL()
+        # New: storage info includes edge vs center slot
+        store_x, store_y, slot_pos = storageL()
 
-        # victim currently sits on the TO square → move it to storage
-        locationOnEdge(x2, y2, store_x, store_y)
+        # Move captured piece to storage
+        moveCapturedToStorage(x2, y2, store_x, store_y, slot_pos)
 
-        # now move attacker from FROM → TO
+        # Now move attacker from FROM → TO as normal
         locationOnEdge(x1, y1, x2, y2)
 
-        # advance storage slot
+        # Advance storage slot index
         storage += 1
 
     print(f"[ROBOT] move={move_uci}, capture={is_capture}")
