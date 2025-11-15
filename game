@@ -32,22 +32,21 @@ ENGINE_PATH = "stockfish"
 storage = 0
 
 
-# Build the list of candidate storage squares:
 _storage_squares = []
 
-# Top edge above the board: (1..8, 0)
+# 1) Top edge above the board: (1..8, 0) → will be used FIRST
 for x in range(1, 9):
     _storage_squares.append((x, 0))
 
-# Left edge of the board: (0, 1..8)
+# 2) Left edge of the board: (0, 1..8)
 for y in range(1, 9):
     _storage_squares.append((0, y))
 
-# Right edge of the board: (9, 1..8)
+# 3) Right edge of the board: (9, 1..8)
 for y in range(1, 9):
     _storage_squares.append((9, y))
 
-# Optional top corners for maximum distance
+# 4) Optional top corners (used last)
 _storage_squares.append((0, 0))
 _storage_squares.append((9, 0))
 
