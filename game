@@ -183,23 +183,45 @@ def storageL():
 def send_move_to_physical_board(move_uci: str, is_capture: bool):
     global storage
 
-    from_x = translatex(move_uci[0])
-    from_y = translatey(move_uci[1])
-    to_x   = translatex(move_uci[2])
-    to_y   = translatey(move_uci[3])
+    # UCI: [0]=from_file, [1]=from_rank, [2]=to_file, [3]=to_rank
+    from_file = move_uci[0]
+    from_rank = move_uci[1]
+    to_file   = move_uci[2]
+    to_rank   = move_uci[3]
+
+    # Logical indices in 1..8, top-left grid
+    file_from_idx = translatex(from_file)   # 1..8 left→right
+    rank_from_idx = translatey(from_rank)   # 1..8 top→bottom
+    file_to_idx   = translatex(to_file)
+    rank_to_idx   = translatey(to_rank)
+
+    # If axes are swapped, feed (rank, file) into locationOnEdge
+    # instead of (file, rank).
+    x1 = rank_from_idx
+    y1 = file_from_idx
+    x2 = rank_to_idx
+    y2 = file_to_idx
 
     if not is_capture:
         # simple move
-        locationOnEdge(from_x, from_y, to_x, to_y)
-        print(from_x, from_y, to_x, to_y)
+        locationOnEdge(x1, y1, x2, y2)
+        print(f"move coords (from→to): ({x1},{y1}) -> ({x2},{y2})")
+
     else:
-        # move captured piece to storage, then move attacker onto target
+        # move captured piece to storage square, then attacker to destination
         store_x, store_y = storageL()
-        locationOnEdge(to_x, to_y, store_x, store_y)          # move victim to storage
-        locationOnEdge(from_x, from_y, to_x, to_y)            # move attacker to destination
-        storage += 1   
+
+        # victim currently sits on the TO square → move it to storage
+        locationOnEdge(x2, y2, store_x, store_y)
+
+        # now move attacker from FROM → TO
+        locationOnEdge(x1, y1, x2, y2)
+
+        # advance storage slot
+        storage += 1
 
     print(f"[ROBOT] move={move_uci}, capture={is_capture}")
+
 
 
 #utilities
