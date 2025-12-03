@@ -1,42 +1,3 @@
-# lets have a grid that represents spots on the board
-
-# this grid starts at the bottom left corner, closet to the mounted motor, looking towards the other side
-
-# the bottom is (0,0)
-
-# this area is for storage
-
-#this lowkey might be wrong depedning on how the board works out, but lets find out first
-
-#written by Austin Goodnight
-
-'''
-MOTOR TESTING
-
-MOTOR I
-with real driver:
-    single power source, worked currently once currend was adjusted
-with real driver in assembly
-with fake driver:
-    single power soruce, could not get work work (motor vibrated), possibly because current struggled to be adjusted
-    (trying on broken motor just in case)
-
-MOTOR II
-with real driver:
-    single power source, gets stuck and varies speed even with current adjustmnet
-with fake driver:
-
-MOTOR III
-with real driver:
-    not tested but seems to work flawlessy
-with fake driver:
-'''
-
-
-
-
-
-
 
 #import libraries
 import time
@@ -55,11 +16,6 @@ PIN LAYOUT
 g  21
 USB PORT SIDE
 '''
-
-#this assigns each motor to an output on the pi
-#one is an alernating control that moves the motor once per HIGH/LOW
-#the second changes the direction of this movement when HIGH
-
 
 #x-direction
 m1step = LED(20) 
@@ -84,7 +40,6 @@ mux3 = Button(24, pull_up=True)
 mux4 = Button(25, pull_up=True)
 
 
-
 rotationLength = 39.0
 stepsPerRotation = 3200
 squareSize = 58.7475 #size of squares -> real size is 55, meaning there's a mismatch between this value and rotationLength
@@ -95,69 +50,23 @@ motorDelay = .05 #delay between motor pulses in microseconds // lower >> faster 
 
 
 def binaryPlus(s):
-    #shoutout stack overflow for this one
     return '{:04b}'.format(1+ int(s,2))
 
 def increment_4bit(bits):
 
-    # Convert bit array → int
+    # convert bit array → int
     value = (bits[0] << 3) | (bits[1] << 2) | (bits[2] << 1) | bits[3]
 
-    # Increment mod 16
+    # increment mod 16
     value = (value + 1) & 0xF
 
-    # Write back into the same list
+    # write back into the same list
     bits[0] = (value >> 3) & 1
     bits[1] = (value >> 2) & 1
     bits[2] = (value >> 1) & 1
     bits[3] = value & 1
 
-
-
-
 reed = np.zeros((8,8))
-
-def reedSensors():
-    S1.off()
-    S0.off()
-    S2.off()
-    S3.off()
-    s = [0,0,0,0]
-    for i in range(16):
-        
-        if s[0] == '1':
-            S0.on()
-        else: 
-            S0.off()
-        if s[1] == '1':
-            S1.on()
-        else: 
-            S1.off()
-        if s[2] == '1':
-            S2.on()
-        else: 
-            S2.off()
-        if s[3] == '1':
-            S3.on()
-        else: 
-            S3.off()
-        if (i < 8):
-            reed[0,i] = mux1.is_pressed
-            reed[2, i] = mux2.is_pressed
-            reed[4, i] = mux3.is_pressed
-            reed[6, i] = mux4.is_pressed
-        else:
-            reed[1,i-8] = mux1.is_pressed
-            reed[3,i-8] = mux2.is_pressed
-            reed[5,i-8] = mux3.is_pressed
-            reed[7,i-8] = mux4.is_pressed
-        increment_4bit(s)
-        print(s)
-    for row in reed:
-        print(row)
-
-
-
 
 def motorController(distance, axis):
 
@@ -317,7 +226,6 @@ def translatex(x):
 
 while True:
     
-
     move = input("put next move (x,y) -> (x,y) as 'x,y,x,y'")
     moves = move.split(',')
 
@@ -334,40 +242,3 @@ while True:
 
     locationOnEdge(x1,y1,x2,y2)
     
-
-
-
-
-'''
-
-code example
-
-
-motorcontroller(5,x)
-
-motorctronoller(3,y)
-
-# goes to (5,3)
-
-
-toCenter()
-
-mag.on() # grabs piece
-
-toCorner()
-
-
-motorcontroller(2,x)
-
-motorcontroller(1,y)
-
-#moves it +2x +1y, this would need to be calulated
-
-
-mag.off()
-
-
-#after should probably go to corner to recalibrate, etc. 
-
-
-'''

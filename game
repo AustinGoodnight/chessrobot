@@ -202,8 +202,6 @@ def moveCapturedToStorage(x_victim, y_victim, store_x, store_y, slot_pos):
     motorController(-store_y, 'y')
 
 
-
-
 def locationOffEdge(x1,y1,x2,y2):
     #unused function, could be used for pawn moves but currently is not
     motorController(x1,'x')
@@ -341,8 +339,6 @@ def send_move_to_physical_board(move_uci: str, is_capture: bool):
 
 
 
-#utilities
-
 def print_board_and_status(board: chess.Board):
     print(board)
     print()
@@ -355,9 +351,8 @@ def print_board_and_status(board: chess.Board):
 
 
 def get_user_move(board: chess.Board) -> chess.Move:
-    """
-    Get a *legal* move in UCI from stdin.
-    """
+    # get legal move from terminal
+
     while True:
         user_input = input("Your move (UCI, e.g. e2e4, or 'q' to quit): ").strip()
 
